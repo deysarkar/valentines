@@ -1,152 +1,122 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Be My Valentine? 💖</title>
-    <style>
-        body {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #ff9a9e, #fad0c4);
-            margin: 0;
-            overflow: hidden;
-        }
+<title>Valentine 😈</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        h1 {
-            margin-top: 60px;
-            font-size: 40px;
-            color: white;
-        }
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: #ffe6eb;
+    text-align: center;
+}
 
-        .buttons {
-            margin-top: 40px;
-            position: relative;
-            height: 60vh;
-        }
+/* 🌹 ROSE BORDER */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    border: 25px solid transparent;
+    border-image: url('https://i.imgur.com/0KX9X8S.png') 100 round;
+    pointer-events: none;
+}
 
-        button {
-            padding: 15px 30px;
-            font-size: 20px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            position: absolute;
-            transition: all 0.2s ease;
-        }
+/* Title */
+h1 {
+    margin-top: 50px;
+    font-size: 42px;
+    font-weight: 900;
+    color: black;
+}
 
-        #yesBtn {
-            background-color: #ff4d6d;
-            color: white;
-            left: 40%;
-        }
+button {
+    padding: 15px 30px;
+    font-size: 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    position: absolute;
+    transition: 0.2s ease;
+}
 
-        #noBtn {
-            background-color: #444;
-            color: white;
-            left: 55%;
-        }
+#yesBtn {
+    background: #ff4d6d;
+    color: white;
+    left: 35%;
+    top: 50%;
+}
 
-        #message {
-            font-size: 42px;
-            font-weight: bold;
-            margin-top: 20px;
-            color: black;
-            min-height: 50px;
-        }
+#noBtn {
+    background: #333;
+    color: white;
+    left: 55%;
+    top: 50%;
+}
 
-        /* Shake animation */
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            50% { transform: translateX(10px); }
-            75% { transform: translateX(-10px); }
-            100% { transform: translateX(0); }
-        }
+#message {
+    margin-top: 20px;
+    font-weight: bold;
+    color: black;
+    min-height: 60px;
+    transition: 0.2s ease;
+}
 
-        .shake {
-            animation: shake 0.3s;
-        }
+.popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 10000;
+}
 
-        /* Fullscreen YES */
-        .fullScreenYes {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            font-size: 80px !important;
-            border-radius: 0 !important;
-            z-index: 9999;
-        }
+.popup img {
+    max-width: 300px;
+}
 
-        /* Popup */
-        .popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            z-index: 10000;
-        }
+.popup p {
+    color: white;
+    font-size: 26px;
+}
 
-        .popup img {
-            max-width: 350px;
-        }
-
-        .popup p {
-            color: white;
-            font-size: 28px;
-            margin-top: 15px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        canvas {
-            position: fixed;
-            pointer-events: none;
-            top: 0;
-            left: 0;
-        }
-    </style>
+.hidden { display: none; }
+</style>
 </head>
 
 <body>
 
-    <h1>Will You Be My Valentine? 💘</h1>
+<h1>Ojasvi Singh Kadian, Will You Be My Valentine?</h1>
 
-    <div class="buttons">
-        <button id="yesBtn">Yes 💖</button>
-        <button id="noBtn">No 😢</button>
-    </div>
+<button id="yesBtn">Yes 💖</button>
+<button id="noBtn">No 😢</button>
 
-    <div id="message"></div>
+<div id="message"></div>
 
-    <!-- YES POPUP -->
-    <div id="popup" class="popup hidden">
-        <img src="happy.jpg" alt="Happy Guy">
-        <p>this lil guy is very happy 🥹💖</p>
-    </div>
+<div id="popup" class="popup hidden">
+    <img id="popupImg">
+    <p id="popupText"></p>
+</div>
 
-    <!-- Background Music -->
-    <audio id="bgMusic" autoplay loop>
-        <source src="music.mp3" type="audio/mpeg">
-    </audio>
-
-    <canvas id="confetti"></canvas>
+<audio id="bgMusic" loop>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
 
 <script>
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
 const message = document.getElementById("message");
 const popup = document.getElementById("popup");
+const popupImg = document.getElementById("popupImg");
+const popupText = document.getElementById("popupText");
+const music = document.getElementById("bgMusic");
 
 let yesScale = 1;
+let noCount = 0;
+let textSize = 24;
 
 const hoverPrompts = [
     "the balls on you to say no",
@@ -158,76 +128,71 @@ const hoverPrompts = [
     "TUJHE MERI GADI KI KASAM"
 ];
 
-noBtn.addEventListener("mouseover", function() {
+const noImages = [
+    "no1.jpg",
+    "no2.jpg",
+    "no3.jpg"
+];
 
-    // Shake effect
-    noBtn.classList.add("shake");
-    setTimeout(() => noBtn.classList.remove("shake"), 300);
-
-    // Safe movement
+function moveNo() {
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
-    const maxX = window.innerWidth - btnWidth - 20;
-    const maxY = window.innerHeight - btnHeight - 20;
 
-    noBtn.style.left = Math.random() * maxX + "px";
-    noBtn.style.top = Math.random() * maxY + "px";
+    const x = Math.random() * (window.innerWidth - btnWidth - 20);
+    const y = Math.random() * (window.innerHeight - btnHeight - 20);
 
-    // Random prompt
-    message.innerText =
-        hoverPrompts[Math.floor(Math.random() * hoverPrompts.length)];
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
 
-    // YES grows
+    message.innerText = hoverPrompts[Math.floor(Math.random()*hoverPrompts.length)];
+
+    textSize += 4;
+    message.style.fontSize = textSize + "px";
+
     yesScale += 0.2;
     yesBtn.style.transform = `scale(${yesScale})`;
 
-    // Eventually take over screen
-    if (yesScale > 3) {
-        yesBtn.classList.add("fullScreenYes");
-        yesBtn.innerText = "JUST SAY YES 😈💖";
+    showNoPopup();
+
+    noCount++;
+
+    if (noCount >= 8) {
+        popupImg.style.display = "none";
+        popupText.innerText = "JUST SAY YES 😈";
+        popup.classList.remove("hidden");
     }
-});
+}
 
-// YES clicked
-yesBtn.addEventListener("click", function() {
+function showNoPopup() {
+    const randomImg = noImages[Math.floor(Math.random()*noImages.length)];
+    popupImg.src = randomImg;
+    popupImg.style.display = "block";
+    popupText.innerText = "Are you sure about that?";
     popup.classList.remove("hidden");
-    startConfetti();
+
+    setTimeout(() => {
+        popup.classList.add("hidden");
+    }, 1500);
+}
+
+noBtn.addEventListener("mouseenter", moveNo);
+noBtn.addEventListener("touchstart", function(e){
+    e.preventDefault();
+    moveNo();
 });
 
-// Close popup
-popup.addEventListener("click", function() {
+yesBtn.addEventListener("click", function(){
+    popupImg.src = "happy.jpg";
+    popupImg.style.display = "block";
+    popupText.innerText = "this lil guy is very happy 🥹💖";
+    popup.classList.remove("hidden");
+
+    music.play();
+});
+
+popup.addEventListener("click", function(){
     popup.classList.add("hidden");
 });
-
-// 🎉 CONFETTI SYSTEM
-const canvas = document.getElementById("confetti");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let confettiPieces = [];
-
-function startConfetti() {
-    for (let i = 0; i < 150; i++) {
-        confettiPieces.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            r: Math.random() * 6 + 2,
-            d: Math.random() * 50
-        });
-    }
-    animateConfetti();
-}
-
-function animateConfetti() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    confettiPieces.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `hsl(${Math.random()*360}, 100%, 50%)`;
-        ctx.fill();
-    });
-}
 </script>
 
 </body>
