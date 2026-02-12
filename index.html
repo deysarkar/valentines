@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Valentine 😈</title>
+<title>Valentine 💗</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
     margin: 0;
     overflow: hidden;
-    font-family: Arial, sans-serif;
-    background: #ffe6eb;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: radial-gradient(circle at center, #ffd6e8 0%, #ff69b4 60%, #c2185b 100%);
     text-align: center;
+    transition: background 0.5s ease;
 }
 
-/* 🌹 ROSE BORDER */
+/* 🌹 Rose Border */
 body::before {
     content: "";
     position: fixed;
@@ -26,11 +27,12 @@ body::before {
 /* Title */
 h1 {
     margin-top: 50px;
-    font-size: 42px;
+    font-size: 44px;
     font-weight: 900;
     color: black;
 }
 
+/* Buttons */
 button {
     padding: 15px 30px;
     font-size: 20px;
@@ -60,9 +62,11 @@ button {
     font-weight: bold;
     color: black;
     min-height: 60px;
+    font-size: 24px;
     transition: 0.2s ease;
 }
 
+/* Popup */
 .popup {
     position: fixed;
     inset: 0;
@@ -84,12 +88,33 @@ button {
 }
 
 .hidden { display: none; }
+
+/* 💕 Floating Hearts */
+.heart {
+    position: fixed;
+    bottom: -20px;
+    font-size: 24px;
+    animation: floatUp 6s linear infinite;
+    opacity: 0.8;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-110vh) scale(1.5); opacity: 0; }
+}
+
+/* 🎉 Confetti */
+canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+}
 </style>
 </head>
 
 <body>
 
-<h1>Ojasvi Singh Kadian, Will You Be My Valentine?</h1>
+<h1>Will You Be My Valentine?</h1>
 
 <button id="yesBtn">Yes 💖</button>
 <button id="noBtn">No 😢</button>
@@ -104,6 +129,8 @@ button {
 <audio id="bgMusic" loop>
     <source src="music.mp3" type="audio/mpeg">
 </audio>
+
+<canvas id="confetti"></canvas>
 
 <script>
 const yesBtn = document.getElementById("yesBtn");
@@ -128,12 +155,22 @@ const hoverPrompts = [
     "TUJHE MERI GADI KI KASAM"
 ];
 
-const noImages = [
-    "no1.jpg",
-    "no2.jpg",
-    "no3.jpg"
-];
+const noImages = ["no1.jpg","no2.jpg","no3.jpg"];
 
+/* 💕 Floating Hearts Generator */
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerText = "💖";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (20 + Math.random() * 30) + "px";
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 6000);
+}
+setInterval(createHeart, 500);
+
+/* NO Logic */
 function moveNo() {
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
@@ -156,6 +193,10 @@ function moveNo() {
 
     noCount++;
 
+    if (noCount === 5) {
+        document.body.style.background = "#8b0000"; // dark red mode 😈
+    }
+
     if (noCount >= 8) {
         popupImg.style.display = "none";
         popupText.innerText = "JUST SAY YES 😈";
@@ -170,9 +211,7 @@ function showNoPopup() {
     popupText.innerText = "Are you sure about that?";
     popup.classList.remove("hidden");
 
-    setTimeout(() => {
-        popup.classList.add("hidden");
-    }, 1500);
+    setTimeout(() => popup.classList.add("hidden"), 1200);
 }
 
 noBtn.addEventListener("mouseenter", moveNo);
@@ -181,18 +220,55 @@ noBtn.addEventListener("touchstart", function(e){
     moveNo();
 });
 
+/* YES Logic */
 yesBtn.addEventListener("click", function(){
     popupImg.src = "happy.jpg";
     popupImg.style.display = "block";
     popupText.innerText = "this lil guy is very happy 🥹💖";
     popup.classList.remove("hidden");
-
     music.play();
+    startConfetti();
 });
 
 popup.addEventListener("click", function(){
     popup.classList.add("hidden");
 });
+
+/* 🎉 Confetti */
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let pieces = [];
+
+function startConfetti() {
+    pieces = [];
+    for (let i = 0; i < 200; i++) {
+        pieces.push({
+            x: Math.random()*canvas.width,
+            y: Math.random()*canvas.height,
+            r: Math.random()*6+2,
+            d: Math.random()*3+1,
+            color: `hsl(${Math.random()*360},100%,50%)`
+        });
+    }
+    animateConfetti();
+}
+
+function animateConfetti() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{
+        p.y += p.d;
+        if(p.y > canvas.height) p.y = 0;
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle=p.color;
+        ctx.fill();
+    });
+    requestAnimationFrame(animateConfetti);
+}
 </script>
 
 </body>
