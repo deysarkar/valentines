@@ -114,8 +114,7 @@ canvas {
 
 <body>
 
-<h1>Ojasvi Singh Kadian, 
-    Will You Be My Valentine?</h1>
+<h1>Ojasvi Singh Kadian, Will You Be My Valentine?</h1>
 
 <button id="yesBtn">Yes 💖</button>
 <button id="noBtn">No 😢</button>
@@ -127,6 +126,7 @@ canvas {
     <p id="popupText"></p>
 </div>
 
+<!-- 🎵 Music in ROOT -->
 <audio id="bgMusic" loop>
     <source src="music.mp3" type="audio/mpeg">
 </audio>
@@ -146,9 +146,9 @@ let yesScale = 1;
 let noCount = 0;
 let textSize = 24;
 
-/* 🎵 Play music entire time after first interaction */
+/* 🎵 Play music after first interaction */
 function startMusic() {
-    music.play();
+    music.play().catch(()=>{});
     document.removeEventListener("click", startMusic);
     document.removeEventListener("touchstart", startMusic);
 }
@@ -280,4 +280,3 @@ function animateConfetti() {
 
 </body>
 </html>
-
