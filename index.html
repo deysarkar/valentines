@@ -7,11 +7,12 @@
             text-align: center;
             font-family: Arial, sans-serif;
             background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            margin: 0;
             overflow: hidden;
         }
 
         h1 {
-            margin-top: 80px;
+            margin-top: 60px;
             font-size: 40px;
             color: white;
         }
@@ -19,7 +20,7 @@
         .buttons {
             margin-top: 40px;
             position: relative;
-            height: 300px;
+            height: 60vh;
         }
 
         button {
@@ -29,7 +30,7 @@
             border-radius: 10px;
             cursor: pointer;
             position: absolute;
-            transition: 0.2s ease;
+            transition: all 0.2s ease;
         }
 
         #yesBtn {
@@ -45,30 +46,51 @@
         }
 
         #message {
-            font-size: 28px;
+            font-size: 42px;
+            font-weight: bold;
             margin-top: 20px;
-            color: white;
-            min-height: 40px;
+            color: black;
+            min-height: 50px;
         }
 
-        img {
-            margin-top: 20px;
-            max-width: 300px;
-            border-radius: 15px;
+        /* Shake animation */
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
         }
 
-        /* Popup styling */
+        .shake {
+            animation: shake 0.3s;
+        }
+
+        /* Fullscreen YES */
+        .fullScreenYes {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            font-size: 80px !important;
+            border-radius: 0 !important;
+            z-index: 9999;
+        }
+
+        /* Popup */
         .popup {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            z-index: 10000;
         }
 
         .popup img {
@@ -84,6 +106,13 @@
         .hidden {
             display: none;
         }
+
+        canvas {
+            position: fixed;
+            pointer-events: none;
+            top: 0;
+            left: 0;
+        }
     </style>
 </head>
 
@@ -97,7 +126,6 @@
     </div>
 
     <div id="message"></div>
-    <div id="imageContainer"></div>
 
     <!-- YES POPUP -->
     <div id="popup" class="popup hidden">
@@ -105,69 +133,102 @@
         <p>this lil guy is very happy 🥹💖</p>
     </div>
 
-    <script>
-        const yesBtn = document.getElementById("yesBtn");
-        const noBtn = document.getElementById("noBtn");
-        const message = document.getElementById("message");
-        const imageContainer = document.getElementById("imageContainer");
-        const popup = document.getElementById("popup");
+    <!-- Background Music -->
+    <audio id="bgMusic" autoplay loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
 
-        let yesSize = 20;
+    <canvas id="confetti"></canvas>
 
-        const hoverPrompts = [
-            "the balls on you to say no",
-            "really, after all that broccoli",
-            "OJASVI ARE YOU KIDDING ME",
-            "come on oj",
-            "SAY YESSSS",
-            "SAY YESSSSSS",
-            "TUJHE MERI GADI KI KASAM"
-        ];
+<script>
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+const message = document.getElementById("message");
+const popup = document.getElementById("popup");
 
-        const images = [
-            "pic1.jpg",
-            "pic2.jpg",
-            "pic3.jpg"
-        ];
+let yesScale = 1;
 
-        // Hover on NO → run + random prompt + yes grows
-        noBtn.addEventListener("mouseover", function() {
+const hoverPrompts = [
+    "the balls on you to say no",
+    "really, after all that broccoli",
+    "OJASVI ARE YOU KIDDING ME",
+    "come on oj",
+    "SAY YESSSS",
+    "SAY YESSSSSS",
+    "TUJHE MERI GADI KI KASAM"
+];
 
-            // Move button randomly
-            const x = Math.random() * (window.innerWidth - 100);
-            const y = Math.random() * (window.innerHeight - 100);
-            noBtn.style.left = x + "px";
-            noBtn.style.top = y + "px";
+noBtn.addEventListener("mouseover", function() {
 
-            // Random dramatic message
-            const randomPrompt = hoverPrompts[Math.floor(Math.random() * hoverPrompts.length)];
-            message.innerHTML = randomPrompt;
+    // Shake effect
+    noBtn.classList.add("shake");
+    setTimeout(() => noBtn.classList.remove("shake"), 300);
 
-            // YES button grows
-            yesSize += 5;
-            yesBtn.style.fontSize = yesSize + "px";
-            yesBtn.style.padding = (yesSize/2) + "px " + (yesSize) + "px";
+    // Safe movement
+    const btnWidth = noBtn.offsetWidth;
+    const btnHeight = noBtn.offsetHeight;
+    const maxX = window.innerWidth - btnWidth - 20;
+    const maxY = window.innerHeight - btnHeight - 20;
+
+    noBtn.style.left = Math.random() * maxX + "px";
+    noBtn.style.top = Math.random() * maxY + "px";
+
+    // Random prompt
+    message.innerText =
+        hoverPrompts[Math.floor(Math.random() * hoverPrompts.length)];
+
+    // YES grows
+    yesScale += 0.2;
+    yesBtn.style.transform = `scale(${yesScale})`;
+
+    // Eventually take over screen
+    if (yesScale > 3) {
+        yesBtn.classList.add("fullScreenYes");
+        yesBtn.innerText = "JUST SAY YES 😈💖";
+    }
+});
+
+// YES clicked
+yesBtn.addEventListener("click", function() {
+    popup.classList.remove("hidden");
+    startConfetti();
+});
+
+// Close popup
+popup.addEventListener("click", function() {
+    popup.classList.add("hidden");
+});
+
+// 🎉 CONFETTI SYSTEM
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let confettiPieces = [];
+
+function startConfetti() {
+    for (let i = 0; i < 150; i++) {
+        confettiPieces.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 6 + 2,
+            d: Math.random() * 50
         });
+    }
+    animateConfetti();
+}
 
-        // YES clicked → show popup
-        yesBtn.addEventListener("click", function() {
-            popup.classList.remove("hidden");
-        });
-
-        // NO clicked → show random image
-        noBtn.addEventListener("click", function() {
-            const randomIndex = Math.floor(Math.random() * images.length);
-            imageContainer.innerHTML =
-                `<img src="${images[randomIndex]}" alt="Sad Image">`;
-            message.innerHTML = "Are you really sure?? 🥺";
-        });
-
-        // Close popup if clicked anywhere
-        popup.addEventListener("click", function() {
-            popup.classList.add("hidden");
-        });
-
-    </script>
+function animateConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    confettiPieces.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `hsl(${Math.random()*360}, 100%, 50%)`;
+        ctx.fill();
+    });
+}
+</script>
 
 </body>
 </html>
