@@ -145,6 +145,15 @@ let yesScale = 1;
 let noCount = 0;
 let textSize = 24;
 
+/* 🎵 Play music entire time after first interaction */
+function startMusic() {
+    music.play();
+    document.removeEventListener("click", startMusic);
+    document.removeEventListener("touchstart", startMusic);
+}
+document.addEventListener("click", startMusic);
+document.addEventListener("touchstart", startMusic);
+
 const hoverPrompts = [
     "the balls on you to say no",
     "really, after all that broccoli",
@@ -157,7 +166,7 @@ const hoverPrompts = [
 
 const noImages = ["no1.jpg","no2.jpg","no3.jpg"];
 
-/* 💕 Floating Hearts Generator */
+/* 💕 Floating Hearts */
 function createHeart() {
     const heart = document.createElement("div");
     heart.className = "heart";
@@ -165,7 +174,6 @@ function createHeart() {
     heart.style.left = Math.random() * 100 + "vw";
     heart.style.fontSize = (20 + Math.random() * 30) + "px";
     document.body.appendChild(heart);
-
     setTimeout(() => heart.remove(), 6000);
 }
 setInterval(createHeart, 500);
@@ -194,7 +202,7 @@ function moveNo() {
     noCount++;
 
     if (noCount === 5) {
-        document.body.style.background = "#8b0000"; // dark red mode 😈
+        document.body.style.background = "#8b0000";
     }
 
     if (noCount >= 8) {
@@ -210,7 +218,6 @@ function showNoPopup() {
     popupImg.style.display = "block";
     popupText.innerText = "Are you sure about that?";
     popup.classList.remove("hidden");
-
     setTimeout(() => popup.classList.add("hidden"), 1200);
 }
 
@@ -226,7 +233,6 @@ yesBtn.addEventListener("click", function(){
     popupImg.style.display = "block";
     popupText.innerText = "this lil guy is very happy 🥹💖";
     popup.classList.remove("hidden");
-    music.play();
     startConfetti();
 });
 
