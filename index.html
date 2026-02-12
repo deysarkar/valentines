@@ -46,6 +46,15 @@ body {
     color: black;
 }
 
+/* Subtitle */
+.subtitle {
+    font-size: 14px;
+    color: black;
+    margin-top: 5px;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
 /* Title */
 .main-title {
     font-size: 44px;
@@ -62,7 +71,7 @@ button {
     border-radius: 10px;
     cursor: pointer;
     position: absolute;
-    transition: 0.2s ease;
+    transition: transform 0.3s ease;
 }
 
 #yesBtn { background:#ff4d6d; color:white; left:35%; top:55%; }
@@ -99,7 +108,7 @@ button {
 
 .hidden { display: none; }
 
-/* Floating hearts & stars */
+/* Floating */
 .float {
     position: fixed;
     bottom: -20px;
@@ -118,7 +127,6 @@ canvas {
     pointer-events: none;
 }
 
-/* Elegant Fade */
 @keyframes fadeIn {
     from { opacity: 0; transform: scale(0.9); }
     to { opacity: 1; transform: scale(1); }
@@ -143,9 +151,10 @@ canvas {
 </div>
 
 <div class="name">Ojasvi Singh Kadian</div>
+<div class="subtitle">for the second year in a row</div>
 <div class="main-title">WILL YOU BE MY VALENTINE</div>
 
-<button id="yesBtn">Yes 💖</button>
+<button id="yesBtn">YES! 💖</button>
 <button id="noBtn">No 😢</button>
 
 <div id="message"></div>
@@ -173,6 +182,7 @@ const music=document.getElementById("bgMusic");
 let noCount=0;
 let textSize=24;
 let finalShown=false;
+let yesScale=1;
 
 /* Force music */
 function forceMusic(){
@@ -183,7 +193,16 @@ document.addEventListener("click",forceMusic);
 document.addEventListener("mousemove",forceMusic);
 document.addEventListener("touchstart",forceMusic);
 
-/* NO logic */
+/* Random hover lines */
+const hoverLines = [
+    "OJASVI REALLY 😐",
+    "AFTER ALL THE BROCCOLI 🥦",
+    "TUJHE BUTTER CHICKEN KI KASAM 🍗",
+    "Fine, I will dress up 😌",
+    "OJASVI I WILL SKIN YOU 😤",
+    "YOU HAVE TO BE KIDDING ME 😭"
+];
+
 function moveNo(){
     const w=noBtn.offsetWidth;
     const h=noBtn.offsetHeight;
@@ -194,9 +213,15 @@ function moveNo(){
     noBtn.style.left=x+"px";
     noBtn.style.top=y+"px";
 
-    message.innerText="SAY YESSSS 😈";
+    const randomLine = hoverLines[Math.floor(Math.random()*hoverLines.length)];
+    message.innerText=randomLine;
+
     textSize+=4;
     message.style.fontSize=textSize+"px";
+
+    /* YES grows bigger */
+    yesScale += 0.2;
+    yesBtn.style.transform = "scale(" + yesScale + ")";
 
     noCount++;
 
@@ -237,7 +262,7 @@ popup.addEventListener("click",function(){
     }
 });
 
-/* Elegant final date screen */
+/* Elegant final screen */
 function showFinalDate(){
     const finalDiv=document.createElement("div");
     finalDiv.style.position="fixed";
@@ -259,7 +284,7 @@ function showFinalDate(){
             7:00 PM
         </p>
         <p style="margin-top:40px;font-size:18px;color:#ff69b4;opacity:0.8;">
-            Dress well. It’s special.
+            Dress well. It’s YOUR treat 
         </p>
     `;
 
@@ -270,7 +295,7 @@ function showFinalDate(){
     });
 }
 
-/* Floating hearts & stars */
+/* Floating */
 function createFloat(){
     const items=["💖","🧡","🖤","⭐"];
     const el=document.createElement("div");
