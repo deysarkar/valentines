@@ -154,7 +154,7 @@ canvas {
 <div class="subtitle">for the second year in a row</div>
 <div class="main-title">WILL YOU BE MY VALENTINE</div>
 
-<button id="yesBtn">YES! 💖</button>
+<button id="yesBtn">Yes 💖</button>
 <button id="noBtn">No 😢</button>
 
 <div id="message"></div>
@@ -225,8 +225,9 @@ function moveNo(){
 
     noCount++;
 
+    /* DARK GREY ESCALATION */
     if(noCount===5){
-        document.body.style.background="#8b0000";
+        document.body.style.background = "linear-gradient(circle at center, #3a3a3a 0%, #1c1c1c 100%)";
     }
 
     if(noCount>=8){
@@ -284,7 +285,7 @@ function showFinalDate(){
             7:00 PM
         </p>
         <p style="margin-top:40px;font-size:18px;color:#ff69b4;opacity:0.8;">
-            Dress well. It’s YOUR treat 
+            Dress well. It’s special.
         </p>
     `;
 
