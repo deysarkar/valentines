@@ -11,9 +11,9 @@
         }
 
         h1 {
-            margin-top: 100px;
+            margin-top: 80px;
             font-size: 40px;
-            color: #fff;
+            color: white;
         }
 
         .buttons {
@@ -45,15 +45,44 @@
         }
 
         #message {
-            font-size: 30px;
+            font-size: 28px;
             margin-top: 20px;
             color: white;
+            min-height: 40px;
         }
 
         img {
             margin-top: 20px;
             max-width: 300px;
             border-radius: 15px;
+        }
+
+        /* Popup styling */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .popup img {
+            max-width: 350px;
+        }
+
+        .popup p {
+            color: white;
+            font-size: 28px;
+            margin-top: 15px;
+        }
+
+        .hidden {
+            display: none;
         }
     </style>
 </head>
@@ -70,47 +99,74 @@
     <div id="message"></div>
     <div id="imageContainer"></div>
 
+    <!-- YES POPUP -->
+    <div id="popup" class="popup hidden">
+        <img src="happy.jpg" alt="Happy Guy">
+        <p>this lil guy is very happy 🥹💖</p>
+    </div>
+
     <script>
         const yesBtn = document.getElementById("yesBtn");
         const noBtn = document.getElementById("noBtn");
         const message = document.getElementById("message");
         const imageContainer = document.getElementById("imageContainer");
+        const popup = document.getElementById("popup");
 
         let yesSize = 20;
 
-        // Make NO button run away
-        noBtn.addEventListener("mouseover", function() {
-            const x = Math.random() * (window.innerWidth - 100);
-            const y = Math.random() * (window.innerHeight - 100);
-            noBtn.style.left = x + "px";
-            noBtn.style.top = y + "px";
+        const hoverPrompts = [
+            "the balls on you to say no",
+            "really, after all that broccoli",
+            "OJASVI ARE YOU KIDDING ME",
+            "come on oj",
+            "SAY YESSSS",
+            "SAY YESSSSSS",
+            "TUJHE MERI GADI KI KASAM"
+        ];
 
-            // Make YES button bigger
-            yesSize += 5;
-            yesBtn.style.fontSize = yesSize + "px";
-            yesBtn.style.padding = (yesSize/2) + "px " + (yesSize) + "px";
-        });
-
-        // YES clicked
-        yesBtn.addEventListener("click", function() {
-            message.innerHTML = "YAYYYYY!!! 💍💖 I knew you'd say YES! 😍";
-            imageContainer.innerHTML = "";
-        });
-
-        // Add your own images here
         const images = [
             "pic1.jpg",
             "pic2.jpg",
             "pic3.jpg"
         ];
 
+        // Hover on NO → run + random prompt + yes grows
+        noBtn.addEventListener("mouseover", function() {
+
+            // Move button randomly
+            const x = Math.random() * (window.innerWidth - 100);
+            const y = Math.random() * (window.innerHeight - 100);
+            noBtn.style.left = x + "px";
+            noBtn.style.top = y + "px";
+
+            // Random dramatic message
+            const randomPrompt = hoverPrompts[Math.floor(Math.random() * hoverPrompts.length)];
+            message.innerHTML = randomPrompt;
+
+            // YES button grows
+            yesSize += 5;
+            yesBtn.style.fontSize = yesSize + "px";
+            yesBtn.style.padding = (yesSize/2) + "px " + (yesSize) + "px";
+        });
+
+        // YES clicked → show popup
+        yesBtn.addEventListener("click", function() {
+            popup.classList.remove("hidden");
+        });
+
         // NO clicked → show random image
         noBtn.addEventListener("click", function() {
             const randomIndex = Math.floor(Math.random() * images.length);
-            imageContainer.innerHTML = 
+            imageContainer.innerHTML =
                 `<img src="${images[randomIndex]}" alt="Sad Image">`;
             message.innerHTML = "Are you really sure?? 🥺";
         });
+
+        // Close popup if clicked anywhere
+        popup.addEventListener("click", function() {
+            popup.classList.add("hidden");
+        });
+
     </script>
 
 </body>
