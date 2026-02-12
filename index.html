@@ -14,22 +14,44 @@ body {
     transition: background 0.5s ease;
 }
 
-/* 🌹 Rose Border */
-body::before {
-    content: "";
+/* Border Decorations */
+.border {
     position: fixed;
-    inset: 0;
-    border: 25px solid transparent;
-    border-image: url('https://i.imgur.com/0KX9X8S.png') 100 round;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
     pointer-events: none;
+    z-index: 9999;
+    font-size: 22px;
 }
 
-/* Title */
-h1 {
+.top-border { top: 0; width: 100%; height: 40px; }
+.bottom-border { bottom: 0; width: 100%; height: 40px; }
+.left-border { left: 0; height: 100%; width: 40px; flex-direction: column; }
+.right-border { right: 0; height: 100%; width: 40px; flex-direction: column; }
+
+.border span { animation: pulse 2s infinite alternate; }
+
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.3); }
+}
+
+/* Name Styling */
+.name {
     margin-top: 50px;
+    font-size: 36px;
+    font-weight: 900;
+    font-style: italic;
+    color: black;
+}
+
+/* Main Title */
+.main-title {
     font-size: 44px;
     font-weight: 900;
     color: black;
+    margin-top: 10px;
 }
 
 /* Buttons */
@@ -43,19 +65,8 @@ button {
     transition: 0.2s ease;
 }
 
-#yesBtn {
-    background: #ff4d6d;
-    color: white;
-    left: 35%;
-    top: 50%;
-}
-
-#noBtn {
-    background: #333;
-    color: white;
-    left: 55%;
-    top: 50%;
-}
+#yesBtn { background:#ff4d6d; color:white; left:35%; top:55%; }
+#noBtn { background:#333; color:white; left:55%; top:55%; }
 
 #message {
     margin-top: 20px;
@@ -70,7 +81,7 @@ button {
 .popup {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.85);
+    background: rgba(0,0,0,0.9);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -78,24 +89,22 @@ button {
     z-index: 10000;
 }
 
-.popup img {
-    max-width: 300px;
-}
+.popup img { max-width: 320px; }
 
 .popup p {
     color: white;
     font-size: 26px;
+    text-align: center;
 }
 
 .hidden { display: none; }
 
-/* 💕 Floating Hearts */
-.heart {
+/* Floating hearts & stars */
+.float {
     position: fixed;
     bottom: -20px;
-    font-size: 24px;
-    animation: floatUp 6s linear infinite;
-    opacity: 0.8;
+    animation: floatUp linear infinite;
+    pointer-events: none;
 }
 
 @keyframes floatUp {
@@ -103,7 +112,6 @@ button {
     100% { transform: translateY(-110vh) scale(1.5); opacity: 0; }
 }
 
-/* 🎉 Confetti */
 canvas {
     position: fixed;
     inset: 0;
@@ -114,7 +122,22 @@ canvas {
 
 <body>
 
-<h1>Ojasvi Singh Kadian, Will You Be My Valentine?</h1>
+<!-- Border Hearts -->
+<div class="border top-border">
+    <span>💖</span><span>🧡</span><span>🖤</span><span>⭐</span><span>💖</span><span>🧡</span>
+</div>
+<div class="border bottom-border">
+    <span>🖤</span><span>⭐</span><span>💖</span><span>🧡</span><span>🖤</span>
+</div>
+<div class="border left-border">
+    <span>💖</span><span>🧡</span><span>🖤</span><span>⭐</span>
+</div>
+<div class="border right-border">
+    <span>🖤</span><span>⭐</span><span>💖</span><span>🧡</span>
+</div>
+
+<div class="name">Ojasvi Singh Kadian</div>
+<div class="main-title">WILL YOU BE MY VALENTINE</div>
 
 <button id="yesBtn">Yes 💖</button>
 <button id="noBtn">No 😢</button>
@@ -126,155 +149,147 @@ canvas {
     <p id="popupText"></p>
 </div>
 
-<!-- 🎵 Music in ROOT -->
-<audio id="bgMusic" loop>
+<audio id="bgMusic" autoplay loop>
     <source src="music.mp3" type="audio/mpeg">
 </audio>
 
 <canvas id="confetti"></canvas>
 
 <script>
-const yesBtn = document.getElementById("yesBtn");
-const noBtn = document.getElementById("noBtn");
-const message = document.getElementById("message");
-const popup = document.getElementById("popup");
-const popupImg = document.getElementById("popupImg");
-const popupText = document.getElementById("popupText");
-const music = document.getElementById("bgMusic");
+const yesBtn=document.getElementById("yesBtn");
+const noBtn=document.getElementById("noBtn");
+const message=document.getElementById("message");
+const popup=document.getElementById("popup");
+const popupImg=document.getElementById("popupImg");
+const popupText=document.getElementById("popupText");
+const music=document.getElementById("bgMusic");
 
-let yesScale = 1;
-let noCount = 0;
-let textSize = 24;
+let noCount=0;
+let textSize=24;
+let finalShown=false;
 
-/* 🎵 Play music after first interaction */
-function startMusic() {
+/* Force continuous music */
+function forceMusic(){
     music.play().catch(()=>{});
-    document.removeEventListener("click", startMusic);
-    document.removeEventListener("touchstart", startMusic);
 }
-document.addEventListener("click", startMusic);
-document.addEventListener("touchstart", startMusic);
+forceMusic();
+document.addEventListener("click",forceMusic);
+document.addEventListener("mousemove",forceMusic);
+document.addEventListener("touchstart",forceMusic);
 
-const hoverPrompts = [
-    "the balls on you to say no",
-    "really, after all that broccoli",
-    "OJASVI ARE YOU KIDDING ME",
-    "come on oj",
-    "SAY YESSSS",
-    "SAY YESSSSSS",
-    "TUJHE MERI GADI KI KASAM"
-];
+const noImages=["no1.jpg","no2.jpg","no3.jpg"];
 
-const noImages = ["no1.jpg","no2.jpg","no3.jpg"];
+function moveNo(){
+    const w=noBtn.offsetWidth;
+    const h=noBtn.offsetHeight;
 
-/* 💕 Floating Hearts */
-function createHeart() {
-    const heart = document.createElement("div");
-    heart.className = "heart";
-    heart.innerText = "💖";
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.fontSize = (20 + Math.random() * 30) + "px";
-    document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 6000);
-}
-setInterval(createHeart, 500);
+    const x=Math.random()*(window.innerWidth-w-20);
+    const y=Math.random()*(window.innerHeight-h-20);
 
-/* NO Logic */
-function moveNo() {
-    const btnWidth = noBtn.offsetWidth;
-    const btnHeight = noBtn.offsetHeight;
+    noBtn.style.left=x+"px";
+    noBtn.style.top=y+"px";
 
-    const x = Math.random() * (window.innerWidth - btnWidth - 20);
-    const y = Math.random() * (window.innerHeight - btnHeight - 20);
+    message.innerText="SAY YESSSS 😈";
+    textSize+=4;
+    message.style.fontSize=textSize+"px";
 
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
-
-    message.innerText = hoverPrompts[Math.floor(Math.random()*hoverPrompts.length)];
-
-    textSize += 4;
-    message.style.fontSize = textSize + "px";
-
-    yesScale += 0.2;
-    yesBtn.style.transform = `scale(${yesScale})`;
-
-    showNoPopup();
+    showNoImage();
 
     noCount++;
 
-    if (noCount === 5) {
-        document.body.style.background = "#8b0000";
+    if(noCount===5){
+        document.body.style.background="#8b0000";
     }
 
-    if (noCount >= 8) {
-        popupImg.style.display = "none";
-        popupText.innerText = "JUST SAY YES 😈";
+    if(noCount>=8){
+        popupImg.style.display="none";
+        popupText.innerText="JUST SAY YES 😈";
         popup.classList.remove("hidden");
     }
 }
 
-function showNoPopup() {
-    const randomImg = noImages[Math.floor(Math.random()*noImages.length)];
-    popupImg.src = randomImg;
-    popupImg.style.display = "block";
-    popupText.innerText = "Are you sure about that?";
+function showNoImage(){
+    const img=noImages[Math.floor(Math.random()*noImages.length)];
+    popupImg.src=img;
+    popupImg.style.display="block";
+    popupText.innerText="Are you sure?";
     popup.classList.remove("hidden");
-    setTimeout(() => popup.classList.add("hidden"), 1200);
+    setTimeout(()=>popup.classList.add("hidden"),1200);
 }
 
-noBtn.addEventListener("mouseenter", moveNo);
-noBtn.addEventListener("touchstart", function(e){
+noBtn.addEventListener("mouseenter",moveNo);
+noBtn.addEventListener("touchstart",function(e){
     e.preventDefault();
     moveNo();
 });
 
-/* YES Logic */
-yesBtn.addEventListener("click", function(){
-    popupImg.src = "happy.jpg";
-    popupImg.style.display = "block";
-    popupText.innerText = "this lil guy is very happy 🥹💖";
+yesBtn.addEventListener("click",function(){
+    popupImg.src="happy.jpg";
+    popupImg.style.display="block";
+    popupText.innerText="this lil guy is very happy 🥹💖";
     popup.classList.remove("hidden");
     startConfetti();
+    finalShown=true;
 });
 
-popup.addEventListener("click", function(){
+popup.addEventListener("click",function(){
     popup.classList.add("hidden");
+
+    if(finalShown){
+        setTimeout(()=>{
+            alert("It is a date, Hard Rock Cafe, CP at 7PM 💖");
+        },500);
+        finalShown=false;
+    }
 });
 
-/* 🎉 Confetti */
-const canvas = document.getElementById("confetti");
-const ctx = canvas.getContext("2d");
+/* Floating Hearts + Stars */
+function createFloat(){
+    const items=["💖","🧡","🖤","⭐"];
+    const el=document.createElement("div");
+    el.className="float";
+    el.innerText=items[Math.floor(Math.random()*items.length)];
+    el.style.left=Math.random()*100+"vw";
+    el.style.fontSize=(20+Math.random()*30)+"px";
+    el.style.animationDuration=(5+Math.random()*5)+"s";
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),8000);
+}
+setInterval(createFloat,400);
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+/* Confetti */
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
 
-let pieces = [];
+let pieces=[];
 
-function startConfetti() {
-    pieces = [];
-    for (let i = 0; i < 200; i++) {
+function startConfetti(){
+    pieces=[];
+    for(let i=0;i<200;i++){
         pieces.push({
-            x: Math.random()*canvas.width,
-            y: Math.random()*canvas.height,
-            r: Math.random()*6+2,
-            d: Math.random()*3+1,
-            color: `hsl(${Math.random()*360},100%,50%)`
+            x:Math.random()*canvas.width,
+            y:Math.random()*canvas.height,
+            r:Math.random()*6+2,
+            d:Math.random()*3+1,
+            color:`hsl(${Math.random()*360},100%,50%)`
         });
     }
-    animateConfetti();
+    animate();
 }
 
-function animateConfetti() {
+function animate(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     pieces.forEach(p=>{
-        p.y += p.d;
-        if(p.y > canvas.height) p.y = 0;
+        p.y+=p.d;
+        if(p.y>canvas.height) p.y=0;
         ctx.beginPath();
         ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
         ctx.fillStyle=p.color;
         ctx.fill();
     });
-    requestAnimationFrame(animateConfetti);
+    requestAnimationFrame(animate);
 }
 </script>
 
